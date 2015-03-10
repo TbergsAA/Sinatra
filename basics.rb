@@ -6,14 +6,19 @@ require 'pry'
     erb :form
   end
 
-  delete '/user' do
+  post '/user' do
     user = User.new(params)
     if user.destroy
-      @form = "User,#{params["username"]} is deleted! "
+      @delete_message = "User is deleted!"
       erb :form
     else
-
+      erb :success_log_in
     end
+  end
+
+  post '/edit' do
+    user = User.new(params)
+    erb :register
   end
 
   post '/' do
@@ -65,11 +70,7 @@ class User
   end
 
   def destroy
-    USERS.delete_if { |user| user == user.username == delete_by_username }
-  end
-
-  def edit
-
+    USERS.delete_if {|user| user.username == delete_by_username }
   end
 end
 
