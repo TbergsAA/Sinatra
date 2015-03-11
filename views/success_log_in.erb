@@ -1,5 +1,6 @@
 <form action="/" method="get">
   <%= @success_log_in %> <br>
+  <%= params["message"] %> <br>
 </form>
 </br>
 
@@ -8,6 +9,10 @@
   <input type="submit" value="Delete"/>
 </form>
 
-<form action="/edit" method="post">
+<form action="/edit_user" method="get">
   <input type="submit" value="Edit"/>
+</form>
+
+<form action="/log_out" method="get">
+  <input type="submit" value="Log out"/>
 </form>
