@@ -1,14 +1,23 @@
 <form action="/register" method="post">
-  <%= params["message"] %> <br>
-  First name <br> <input type="text" name="fname" value=""><br>
-  Last name <br> <input type="text" name="lname" value=""><br>
-  Username <br> <input type="text" name="uname" value=""><br>
-  Email <br> <input type="email" name="email" value=""><br>
+<% unless session[:errors].empty? %>
+<div id="errors">
+    <% session[:errors].each do |key, value| %>
+       <p><%= value %></p>
+    <% end %>
+    <% session[:errors] = {} %>
+</div>
+<% end %>
+  <% binding.pry %>
+  First name <br> <input type="text" name="fname" value="<%= session["params"]["first_name"] if session["params"] %>"><br>
+  Last name <br> <input type="text" name="lname" value="<%= session["params"]["last_name"] if session["params"] %>"><br>
+  Username <br> <input type="text" name="uname" value="<%= session["params"]["username"] if session["params"] %>"><br>
+  Email <br> <input type="email" name="email" value="<%= session["params"]["email"] if session["params"] %>"><br>
   Password <br> <input type="password" name="password" value=""><br>
   password confirm <br> <input type="password" name="password_con" value=""><br>
-  Birthday <br> <input type="date" name="bday" value=""><br>
+  Birthday <br> <input type="date" name="bday" value="<%= session["params"]["bday"] if session["params"] %>"><br>
   Gender <br> <input type="radio" name="sex" value="male" checked>Male <br>
           <input type="radio" name="sex" value="female">Female <br>
   <input type="submit" value="Register">
+  <% session[:params] = {} %>
 </form>
 

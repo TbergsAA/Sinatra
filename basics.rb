@@ -12,20 +12,31 @@ require 'pry'
     end
   end
 
-  get '/log_out' do 
-    if user = User.logged_in?(session)
-      user.session_id = nil
+  post '/' do
+    log_in = UserLogIn.new(params)
+    if log_in.authorization(session)
+      @success_log_in = "Hi,#{params["username"]}"
+      erb :success_log_in
+    else
+      redirect to('/?message=incorect_username_or_password')
     end
-    erb :form
   end
 
-  post '/user' do
+  enable :session
+
+  get '/register' do
+    @user = User.new(params)
+    erb :register
+  end
+
+  post '/register' do
     user = User.new(params)
-    if user.destroy
-      @delete_message = "User is deleted!"
-      erb :form
+    unless response = user.validate
+      redirect to ('/?message=REGISTER_SUCCESS')
     else
-      erb :success_log_in
+      session[:errors] = response
+      session[:params] = User.new(params).to_hash
+      redirect to ("/register")
     end
   end
 
@@ -44,31 +55,24 @@ require 'pry'
     end
   end
 
-  post '/' do
-    log_in = UserLogIn.new(params)
-    if log_in.authorization(session)
-      @success_log_in = "Hi,#{params["username"]}"
-      erb :success_log_in
-    else
-      redirect to('/?message=incorect_username_or_password')
+  get '/log_out' do 
+    if user = User.logged_in?(session)
+      user.session_id = nil
     end
+    erb :form
   end
 
-  get '/register' do
-    erb :register
-  end
-
-  post '/register' do
+  post '/user' do
     user = User.new(params)
-    response = user.save
-    if response == "true"
-      redirect to ('/?message=REGISTER_SUCCESS')
+    if user.destroy
+      @delete_message = "User is deleted!"
+      erb :form
     else
-      redirect to ("/register?message=#{response}")
+      erb :success_log_in
     end
   end
 
-class User
+  class User
 
   attr_reader :first_name, :last_name, :username, :delete_by_username, :email,
    :password, :bday, :password_con
@@ -87,11 +91,42 @@ class User
   end
 
   def save
+    USERS << self
+  end
+
+  def validate
+    errors = {}
+    if first_name.length <= 2
+      errors["fname"] = "First name too short"
+    end
+
+    if last_name.length <= 2
+      errors["lname"] = "Last name too short"
+    end
+
+    if username.length <= 2
+      errors["uname"] = "Username too short"
+    end
+
+    if email.length <= 2
+      errors["email"] = "Wrong email"
+    end
+
     if password == password_con
-      USERS << self
-      "true"
+      save
+      else
+      errors["password"] = "wrong password"
+    end
+
+    if bday.empty?
+      errors["bday"] = "enter your birthday"
+    end
+
+    if errors == {}
+      save
+      nil
     else
-      "Wrong_password"
+      errors
     end
   end
 
@@ -108,6 +143,12 @@ class User
       return u if u.session_id == session["session_id"]
     end
     nil
+  end
+
+  def to_hash
+    hash = {}
+    self.instance_variables.each {|var| hash[var.to_s.delete("@")] = self.instance_variable_get(var) }
+    hash
   end
 end
 
