@@ -1,5 +1,5 @@
 <form action="/register" method="post">
-<% unless session[:errors].empty? %>
+<% if session[:errors] %>
 <div id="errors">
     <% session[:errors].each do |key, value| %>
        <p><%= value %></p>
@@ -7,7 +7,6 @@
     <% session[:errors] = {} %>
 </div>
 <% end %>
-  <% binding.pry %>
   First name <br> <input type="text" name="fname" value="<%= session["params"]["first_name"] if session["params"] %>"><br>
   Last name <br> <input type="text" name="lname" value="<%= session["params"]["last_name"] if session["params"] %>"><br>
   Username <br> <input type="text" name="uname" value="<%= session["params"]["username"] if session["params"] %>"><br>
