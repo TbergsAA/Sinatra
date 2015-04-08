@@ -1,19 +1,12 @@
 <form action="/register" method="post">
-<% if session[:errors] %>
-<div id="errors">
-    <% session[:errors].each do |key, value| %>
-       <p><%= value %></p>
-    <% end %>
-    <% session[:errors] = {} %>
-</div>
-<% end %>
-  First name <br> <input type="text" name="fname" value="<%= session["params"]["first_name"] if session["params"] %>"><br>
-  Last name <br> <input type="text" name="lname" value="<%= session["params"]["last_name"] if session["params"] %>"><br>
-  Username <br> <input type="text" name="uname" value="<%= session["params"]["username"] if session["params"] %>"><br>
-  Email <br> <input type="email" name="email" value="<%= session["params"]["email"] if session["params"] %>"><br>
+
+  First name <br> <input type="text" name="fname" value="<%= @user.first_name %>"><br>
+  Last name <br> <input type="text" name="lname" value="<%= @user.last_name %>"><br>
+  Username <br> <input type="text" name="uname" value="<%= @user.username %>"><br>
+  Email <br> <input type="email" name="email" value="<%= @user.email %>"><br>
   Password <br> <input type="password" name="password" value=""><br>
   password confirm <br> <input type="password" name="password_con" value=""><br>
-  Birthday <br> <input type="date" name="bday" value="<%= session["params"]["bday"] if session["params"] %>"><br>
+  Birthday <br> <input type="date" name="bday" value="<%= @user.bday %>"><br>
   Gender <br> <input type="radio" name="sex" value="male" checked>Male <br>
           <input type="radio" name="sex" value="female">Female <br>
   <input type="submit" value="Register">
