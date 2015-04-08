@@ -7,12 +7,14 @@ Dir[File.dirname(__FILE__) + '/lib/*.rb'].each {|file| require_relative file }
 Dir[File.dirname(__FILE__) + '/controllers/*.rb'].each {|file| require_relative file }
 Dir[File.dirname(__FILE__) + '/controllers/*/*.rb'].each {|file| require_relative file }
 
+set :port, 3000
 set :sessions, true
 set :logging, true
+
 Repos::User.migrate!
 
 get '/' do
-  user_session = UserSession.new(session) 
+  user_session = UserSession.new(session)
   if user_session.logged_in?
     @user = user_session.user
     erb :form
@@ -25,6 +27,7 @@ end
 enable :session
 
 post '/' do
+  session["params"] = params
   log_in = UserSession.new(session)
   if log_in.log_in(params)
     @success_log_in = "Hi,#{params["username"]}"
@@ -68,7 +71,7 @@ post '/edit_user' do
     redirect to('/?message=accont_is_saved')
   end
 end
-get '/log_out' do 
+get '/log_out' do
   session["username"] = nil
   erb :form
 end

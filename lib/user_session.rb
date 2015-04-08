@@ -4,17 +4,17 @@ class UserSession
   def initialize(session)
     @session = session
     @user_repo = Repos::User.new
-
-    @user = find_user(session)
+    @user = find_user(session["params"])
   end
 
   def find_user(params)
-    username = params.fetch("username")
-    password = params.fetch("password")
-
-    @user_repo.all.each do |k|
-      if k["Username"] == username && k["Password"] == password
-        return user
+    username = params.fetch("username", nil)
+    password = params.fetch("password", nil)
+    if username && password
+      @user_repo.all.each do |k|
+        if k["Username"] == username && k["Password"] == password
+          return user
+        end
       end
     end
   end
